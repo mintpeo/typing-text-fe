@@ -1,0 +1,57 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+
+  .modal-box {
+    width: 600px;
+    background: #111827;
+    border-radius: 18px;
+    padding: 24px;
+    color: white;
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .modal-textarea {
+      width: 100%;
+      min-height: 200px;
+      resize: none;
+      border: none;
+      outline: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .modal-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+
+      button {
+        border: none;
+        padding: 10px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .cancel-btn {
+        background: #374151;
+        color: white;
+      }
+
+      .save-btn {
+        background: #22c55e;
+        color: white;
+      }
+    }
+  }
+}

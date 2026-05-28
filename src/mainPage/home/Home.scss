@@ -1,0 +1,237 @@
+#home {
+  font-family: "Roboto", sans-serif;
+  background-color: #111c2e;
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .container {
+    .header {
+      border-bottom: 1px solid #fff;
+      padding: 1rem;
+      justify-content: space-between;
+      background-color: #0a1525;
+      max-height: 60px;
+
+      .side-left {
+        align-items: center;
+        color: #fff;
+        gap: .8rem;
+
+        .icon {
+          transform: scale(1.5);
+        }
+
+        .text {
+          font-size: 1.2rem;
+          font-weight: 400;
+        }
+      }
+
+      .side-right {
+        padding: 1rem;
+        color: #fff;
+        align-items: center;
+        gap: 1.2rem;
+        font-size: 95%;
+
+        .difficult {
+          padding: 0 1rem;
+          max-height: 30px;
+          border-radius: .5rem;
+          border: 1px solid #fff;
+          gap: 2rem;
+          background-color: #1a273b;
+          align-items: center;
+        }
+
+        .setting {
+          cursor: pointer;
+          margin-right: 1.5rem;
+          width: 20px;
+          height: 20px;
+
+          &:hover {
+            .list-items-setting {
+              display: inline-block;
+            }
+          }
+
+          .list-items-setting {
+            position: relative;
+            top: 0;
+            right: 100%;
+            white-space: nowrap;
+            //display: flex;
+            display: none;
+            padding: .5rem;
+            background-color: tan;
+            width: auto;
+            list-style: none;
+            //align-items: center;
+            //justify-content: center;
+
+            .item-setting {
+
+            }
+          }
+        }
+      }
+    }
+
+    .body {
+      padding: 1rem;
+      .info-parameter {
+        .list-items {
+          list-style: none;
+          justify-content: space-evenly;
+          gap: 1rem;
+
+          .item {
+            border-radius: .5rem;
+            border: 1px solid #fff;
+            background-color: #1b283c;
+            gap: .8rem;
+            display: flex;
+            padding: .5rem 1rem;
+
+            .icon-main {
+              display: flex;
+              align-items: center;
+              font-size: 2.5rem;
+              color: navy;
+            }
+
+            .text {
+              color: #fff;
+              padding-right: 1rem;
+
+              p {
+                font-size: 80%;
+                margin: .5rem 0;
+              }
+              
+              h3 {
+                font-size: 1.2rem;
+                margin: .3rem 0;
+              }
+
+              span {
+                font-weight: normal;
+                font-size: 60%;
+              }
+            }
+          }
+        }
+      }
+
+      .paragraph {
+        margin-top: 1rem;
+        background-color: #1b283c;
+        border: 1px solid #fff;
+        border-radius: .5rem;
+        color: #fff;
+        padding: 1rem;
+        font-size: 90%;
+
+        .list-pars {
+          list-style: none;
+          gap: .3rem;
+          flex-wrap: wrap;
+
+          .item-par {
+            .active {
+              color: yellow;
+            }
+          }
+        }
+      }
+
+      .input-paragraph {
+        margin-top: 1rem;
+
+        .typing-input {
+          padding: 1rem;
+          width: 100%;
+          font-size: 22px;
+          border-radius: .5rem;
+          box-sizing: border-box;
+          display: block;
+          resize: none;
+          border: none;
+          outline: none;
+        }
+      }
+    }
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+
+    .modal-box {
+      width: 600px;
+      background: #111827;
+      border-radius: 18px;
+      padding: 24px;
+      color: white;
+
+      h2 {
+        margin-bottom: 20px;
+      }
+
+      .modal-textarea {
+        width: 100%;
+        min-height: 200px;
+        resize: none;
+        border: none;
+        outline: none;
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+
+      .modal-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+
+        button {
+          border: none;
+          padding: 10px 18px;
+          border-radius: 10px;
+          cursor: pointer;
+        }
+
+        .cancel-btn {
+          background: #374151;
+          color: white;
+        }
+
+        .save-btn {
+          background: #22c55e;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1470px) {
+  .info-parameter {
+    .list-items {
+      .item {
+        //padding: 3rem !important;
+      }
+    }
+  }
+}
