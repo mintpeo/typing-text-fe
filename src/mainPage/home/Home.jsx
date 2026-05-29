@@ -114,7 +114,22 @@ const Home = () => {
 
         if (e.key === " ") {
             e.preventDefault();
-            setCurrentIndex(prev => prev + 1);
+            const nextSpaceIndex = targetText.indexOf(" ", currentIndex); // tach chu thanh java la, currentIndex la lay vi tri cua chu do: java
+            const currentWord = targetText.substring(currentIndex, nextSpaceIndex);
+
+            if (nextSpaceIndex === -1) setCurrentIndex(targetText.length);
+            else {
+                setCurrentIndex(nextSpaceIndex + 1);
+                if (typedText.length < currentWord.length) {
+                    setWordStatus(prev => {
+                        const copy = [...prev];
+                        // chay ki tu de chuyen thanh false
+                        for (let i = currentIndex; i < nextSpaceIndex; i++) if (copy[i] == null) copy[i] = false;
+                        return copy;
+                    })
+                }
+            }
+
             setTypedText("");
         }
     };
