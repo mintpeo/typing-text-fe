@@ -1,6 +1,7 @@
 #home {
   font-family: "Roboto", sans-serif;
   background-color: #111c2e;
+  height: 1000px;
 
   .icon {
     width: 16px;
@@ -21,11 +22,11 @@
         gap: .8rem;
 
         .icon {
-          transform: scale(1.5);
+          transform: scale(2);
         }
 
         .text {
-          font-size: 1.2rem;
+          font-size: 1.5rem;
           font-weight: 400;
         }
       }
@@ -35,7 +36,7 @@
         color: #fff;
         align-items: center;
         gap: 1.2rem;
-        font-size: 95%;
+        font-size: 1rem;
 
         .difficult {
           padding: 0 1rem;
@@ -50,6 +51,7 @@
         .setting {
           cursor: pointer;
           margin-right: 1.5rem;
+          //padding: .5rem;
           width: 20px;
           height: 20px;
 
@@ -83,6 +85,7 @@
 
     .body {
       padding: 1rem;
+
       .info-parameter {
         .list-items {
           list-style: none;
@@ -96,6 +99,7 @@
             gap: .8rem;
             display: flex;
             padding: .5rem 1rem;
+            min-width: 200px;
 
             .icon-main {
               display: flex;
@@ -138,12 +142,22 @@
 
         .list-pars {
           list-style: none;
-          gap: .3rem;
+          gap: .1rem;
           flex-wrap: wrap;
 
           .item-par {
             .active {
               color: yellow;
+              text-decoration: underline;
+            }
+
+            .correct {
+              color: yellow;
+            }
+
+            .wrong {
+              color: red;
+              text-decoration: line-through;
             }
           }
         }
@@ -162,6 +176,17 @@
           resize: none;
           border: none;
           outline: none;
+        }
+
+        .btn-start {
+          cursor: pointer;
+          padding: 1rem 2rem;
+          border-radius: .5rem;
+          background-color: red;
+
+          i {
+            font-size: 1.5rem;
+          }
         }
       }
     }

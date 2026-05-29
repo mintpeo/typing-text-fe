@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import './Home.scss'
 // import {checkTyping, countText} from "../../utils/typingUtils.js";
 
@@ -12,17 +12,13 @@ import { GoCheckCircle } from "react-icons/go";
 import { GoXCircle } from "react-icons/go";
 import { IoSpeedometerOutline } from "react-icons/io5";
 import { TbTargetArrow } from "react-icons/tb";
+import { RiResetRightLine } from "react-icons/ri";
 
 const Home = () => {
     const [targetText, setTargetText] = useState("Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích.");
     const [typedText, setTypedText] = useState("");
 
-    // const countedText = countText(targetText);
-    const [targetTextSpilt, setTargetTextSpilt] = useState([]);
-
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [checkedText, setCheckedText] = useState("");
-
     const [correctNumber, setCorrectNumber] = useState(0);
     const [wrongNumber, setWrongNumber] = useState(0);
 
@@ -31,26 +27,35 @@ const Home = () => {
     const [time, setTime] = useState(60);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
-    const [editText, setEditText] = useState("");
+    const [editText, setEditText] = useState(targetText);
 
+    const [isStart, setIsStart] = useState(false);
+
+    const [wordStatus, setWordStatus] = useState([]); // Word staus
+
+    // Handle time
     useEffect(() => {
-        const arr = targetText.split(" ");
-        setTargetTextSpilt(arr);
-    }, [targetText]);
+        if (!isStart) return;
 
-    // useEffect(() => {
-    //     if (currentIndex >= targetTextSpilt.length) alert("OK");
-    // }, [currentIndex]);
+        const handleTime = setInterval(() => {
+            setTime(prev => {
+                if (prev <= 1) {
+                    clearInterval(handleTime);
+                    return 0;
+                }
+                return prev - 1;
+            })
+        }, 1000);
 
-    // console.log(targetTextSpilt[currentIndex]);
-    console.log(targetTextSpilt)
+        return () => clearInterval(handleTime);
+    }, [isStart]);
 
     // Handle wrap
     const handleWrap = (e) => {
         if (e.key === "Enter" || e.key === "Tab") e.preventDefault();
     }
 
-    // Edit text
+    // Save edit text / Reset
     const handleSave = () => {
         setTargetText(editText.trim());
         setIsOpenModal(false);
@@ -60,47 +65,59 @@ const Home = () => {
         setCurrentIndex(0);
         setCorrectNumber(0);
         setWrongNumber(0);
+        setTime(60);
+        setIsStart(false);
+        setWordStatus([]);
     }
 
-    // char
-    const checkTyping = (targetText, typedText) => {
-        let status= "none";
-        for (let i = 0; i < targetText.length; i++) {
-             status = "none";
-
-            if (typedText[i] === targetText[i]) {
-                status = "correct";
-                // setCorrectNumber(correctNumber + 1);
-            } else {
-                status = "wrong";
-                // setWrongNumber(wrongNumber + 1);
-            }
-        }
-        setCheckedText(status);
-    }
-
-    // String
-    const checkString = (targetText, typedText) => {
-        const typed = typedText.trim();
-        if (targetText === typed) setCorrectNumber(correctNumber + 1);
-        else {
-            setWrongNumber(wrongNumber + 1);
-            // setAccuracy()
-        }
-    }
-
-    const handleText = (e) => {
+    // Handle typing
+    const handleTyping = (e) => {
         const value = e.target.value;
-        setTypedText(value);
-        if (value.endsWith(" ") || e.key === "Enter") { // space
-            e.preventDefault();
-            checkString(targetTextSpilt[currentIndex], value);
-            setCurrentIndex(currentIndex + 1);
-            return setTypedText("");
-        } else {
-            // checkTyping(targetTextSpilt[currentIndex], value);
+        const startIndex = currentIndex - typedText.length;
+        const newStatus = [...wordStatus];
+
+        // nếu user backspace
+        if (value.length < typedText.length) {
+            const removeIndex = currentIndex - 1;
+            newStatus[removeIndex] = null;
+
+            setTypedText(value);
+            setWordStatus(newStatus);
+            setCurrentIndex(prev => Math.max(prev - 1, 0));
+
+            return;
         }
-    }
+
+        // check lại toàn bộ chữ trong textarea hiện tại
+        for (let i = 0; i < value.length; i++) {
+            const targetChar = targetText[startIndex + i];
+            newStatus[startIndex + i] = value[i] === targetChar; // check char
+        }
+
+        setTypedText(value);
+        setWordStatus(newStatus);
+        setCurrentIndex(startIndex + value.length);
+
+        const correct = newStatus.filter(item => item === true).length;
+        const wrong = newStatus.filter(item => item === false).length;
+
+        setCorrectNumber(correct);
+        setWrongNumber(wrong);
+    };
+
+    // Key down
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" || e.key === "Tab") {
+            e.preventDefault();
+            return;
+        }
+
+        if (e.key === " ") {
+            e.preventDefault();
+            setCurrentIndex(prev => prev + 1);
+            setTypedText("");
+        }
+    };
 
     return (
         <div id="home">
@@ -121,7 +138,7 @@ const Home = () => {
                             <p>Cấp độ: Dễ</p>
                             <i className="icon"><IoIosArrowDown /></i>
                         </div>
-                        <i className="setting icon">
+                        <i className="setting">
                             <IoSettingsOutline />
 
                             <ul className="list-items-setting">
@@ -143,11 +160,11 @@ const Home = () => {
                                             />
                                             <div className="modal-actions">
                                                 <button
-                                                    className="cancel-btn"
+                                                    className="cancel-btn btn"
                                                     onClick={() => setIsOpenModal(false)}>Cancel</button>
 
                                                 <button
-                                                    className="save-btn"
+                                                    className="save-btn btn"
                                                     onClick={handleSave}>Save</button>
                                             </div>
                                         </div>
@@ -168,7 +185,7 @@ const Home = () => {
                                 <i className="icon-main"><MdAccessTime /></i>
                                 <div className="text">
                                     <p>Thời gian</p>
-                                    <h3>{time} <span>/ {time}s</span></h3>
+                                    <h3>{time} <span>/ 60s</span></h3>
                                 </div>
                             </li>
 
@@ -213,23 +230,33 @@ const Home = () => {
                     {/* Paragraphs */}
                     <div className="paragraph">
                         <ul className="list-pars flex">
-                            {targetTextSpilt.map((item, index) => (
+                            {targetText.split("").map((char, index) => (
                                 <li className="item-par">
-                                    <h2 className={index === currentIndex? "active" : ""}>{item}</h2>
+                                    <h2
+                                        className={`
+                                            ${index === currentIndex? "active" : ""}
+                                            ${wordStatus[index] === true? "correct" 
+                                            :wordStatus[index] === false? "wrong" : ""}
+                                        `}>{char === " " ? "\u00A0" : char}
+                                    </h2>
                                 </li>
                             ))}
                         </ul>
                     </div>
 
                     {/* Input Paragraphs */}
-                    <div className="input-paragraph">
+                    <div className="input-paragraph flex">
                         <textarea
                             className="typing-input"
                             value={typedText}
-                            onChange={e => handleText(e)}
-                            onKeyDown={e => handleText(e)}
+                            onChange={e => {handleTyping(e); setIsStart(true)}}
+                            onKeyDown={handleKeyDown}
                             placeholder="Start typing..."
                         />
+
+                        <button className="btn-start btn" onClick={handleSave}>
+                            <i className="icon"><RiResetRightLine /></i>
+                        </button>
                     </div>
 
                     {/* Key board */}
@@ -239,7 +266,6 @@ const Home = () => {
                 {/* Footer */}
                 <div className="footer">
                     <span style={{color: "#fff"}}>
-                        {checkedText}
                     </span>
                 </div>
             </div>
