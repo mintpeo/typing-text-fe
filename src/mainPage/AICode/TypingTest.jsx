@@ -27,7 +27,7 @@ const UI_STRINGS = {
         modalTextTitle: "Tùy chỉnh văn bản luyện gõ",
         modalTextDesc: "Bạn có thể dán bài báo, lời bài hát hoặc code vào đây (Nhấn Ctrl + Enter để lưu nhanh).",
         modalLayoutTitle: "Cài đặt hiển thị",
-        modalLayoutDesc: "Xác định số lượng từ trên mỗi dòng hiển thị. (3 -> 15 từ)",
+        modalLayoutDesc: "Xác định số lượng từ trên mỗi dòng hiển thị.",
         modalTimeTitle: "⏱️ Cấu hình thời gian",
         modalTimeDesc: "Nhập số giây bạn muốn tập luyện:",
         cancel: "Hủy",
@@ -50,7 +50,7 @@ const UI_STRINGS = {
         modalTextTitle: "Custom Typing Text",
         modalTextDesc: "You can paste articles, lyrics, or code here (Press Ctrl + Enter to quick save).",
         modalLayoutTitle: "Display Settings",
-        modalLayoutDesc: "Determine the number of words displayed per line. (3 -> 15 words)",
+        modalLayoutDesc: "Determine the number of words displayed per line.",
         modalTimeTitle: "⏱️ Time Configuration",
         modalTimeDesc: "Enter the number of seconds you want to practice:",
         cancel: "Cancel",
@@ -117,6 +117,8 @@ export default function TypingTest() {
     const [historyTypedCount, setHistoryTypedCount] = useState(0);
     const [infiniteTimeElapsed, setInfiniteTimeElapsed] = useState(0);
 
+    const allWordsRef = useRef([]);
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isTextModalOpen, setIsTextModalOpen] = useState(false);
     const [isLayoutModalOpen, setIsLayoutModalOpen] = useState(false);
@@ -131,7 +133,6 @@ export default function TypingTest() {
     const inputRef = useRef(null);
     const timerRef = useRef(null);
 
-    // ĐỒI MỚI: Quản lý đầy đủ 3 bộ Timeout riêng biệt cho từng menu dropdown
     const leaveTimeoutRef = useRef(null);
     const langLeaveTimeoutRef = useRef(null);
     const textLangLeaveTimeoutRef = useRef(null);
@@ -146,24 +147,28 @@ export default function TypingTest() {
             text = pool[randomIndex];
         }
 
-        const allWords = text.split(/\s+/).filter(Boolean);
-        const formattedLines = [];
-        let currentLineWords = [];
+        const cleanWords = text.split(/\s+/).filter(Boolean);
+        allWordsRef.current = cleanWords;
+
+        const initialLines = [];
+        let lineWords = [];
         let lineCounter = 0;
 
-        allWords.forEach((word, index) => {
-            currentLineWords.push(word);
-            if (currentLineWords.length === wordsPerLine || index === allWords.length - 1) {
-                formattedLines.push({
-                    lineIdx: lineCounter,
-                    words: currentLineWords
-                });
-                currentLineWords = [];
+        for (let i = 0; i < Math.max(cleanWords.length, wordsPerLine * 5); i++) {
+            const word = cleanWords[i % cleanWords.length];
+            lineWords.push(word);
+
+            if (lineWords.length === wordsPerLine) {
+                initialLines.push({ lineIdx: lineCounter, words: lineWords });
+                lineWords = [];
                 lineCounter++;
             }
-        });
+        }
+        if (lineWords.length > 0) {
+            initialLines.push({ lineIdx: lineCounter, words: lineWords });
+        }
 
-        setLines(formattedLines);
+        setLines(initialLines);
         setCurrentLineIndex(0);
         setCurrentWordIndexInLine(0);
         setTypedChars("");
@@ -181,6 +186,23 @@ export default function TypingTest() {
         if (inputRef.current) inputRef.current.value = "";
         clearInterval(timerRef.current);
         setTimeout(() => focusInput(), 50);
+    };
+
+    const appendNextLine = () => {
+        setLines((prevLines) => {
+            const nextLineIdx = prevLines.length;
+            const cleanWords = allWordsRef.current;
+            const nextWords = [];
+
+            let totalWordsGenerated = prevLines.reduce((sum, l) => sum + l.words.length, 0);
+
+            for (let i = 0; i < wordsPerLine; i++) {
+                const targetIdx = (totalWordsGenerated + i) % cleanWords.length;
+                nextWords.push(cleanWords[targetIdx]);
+            }
+
+            return [...prevLines, { lineIdx: nextLineIdx, words: nextWords }];
+        });
     };
 
     useEffect(() => {
@@ -242,6 +264,8 @@ export default function TypingTest() {
 
     const handleWordSubmit = (currentRawValue) => {
         const currentLine = lines[currentLineIndex];
+        if (!currentLine) return;
+
         const targetWord = currentLine.words[currentWordIndexInLine];
 
         if (!isTestActive) {
@@ -274,18 +298,11 @@ export default function TypingTest() {
             setTypedChars("");
             if (inputRef.current) inputRef.current.value = "";
         } else {
-            if (currentLineIndex + 1 < lines.length) {
-                setCurrentLineIndex((prev) => prev + 1);
-                setCurrentWordIndexInLine(0);
-                setTypedChars("");
-                if (inputRef.current) inputRef.current.value = "";
-            } else {
-                clearInterval(timerRef.current);
-                setIsTestActive(false);
-                setIsTestFinished(true);
-                setTypedChars("");
-                if (inputRef.current) inputRef.current.value = "";
-            }
+            appendNextLine();
+            setCurrentLineIndex((prev) => prev + 1);
+            setCurrentWordIndexInLine(0);
+            setTypedChars("");
+            if (inputRef.current) inputRef.current.value = "";
         }
     };
 
@@ -358,7 +375,6 @@ export default function TypingTest() {
         setIsTimeModalOpen(true);
     };
 
-    // Hàm tiện ích để cấu hình hiệu ứng Hover đổi màu background mượt mà cho option button
     const activateHoverStyle = (e) => { e.currentTarget.style.backgroundColor = "#323437"; };
     const deactivateHoverStyle = (e) => { e.currentTarget.style.backgroundColor = "transparent"; };
 
@@ -379,7 +395,7 @@ export default function TypingTest() {
             {/* KHU VỰC MENU ĐIỀU KHIỂN PHÍA TRÊN GÓC PHẢI */}
             <div style={{ position: "absolute", top: "16px", right: "16px", zIndex: 50, display: "flex", alignItems: "center", gap: "10px" }}>
 
-                {/* 1. CHỌN NGÔN NGỮ GIAO DIỆN (UI LANG) - CÓ DELAY 1S KHI RỜI CHUỘT */}
+                {/* 1. CHỌN NGÔN NGỮ GIAO DIỆN (UI LANG) */}
                 <div
                     style={{ position: "relative" }}
                     onMouseEnter={() => {
@@ -396,18 +412,18 @@ export default function TypingTest() {
                         onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
                         style={{ backgroundColor: "#2c2e31", color: "#646669", border: "1px solid #444649", borderRadius: "6px", padding: "8px 12px", cursor: "pointer", fontSize: "14px", fontFamily: "monospace" }}
                     >
-                        {ui.langUI}: {uiLang === "vi" ? "Vietnamese" : uiLang === "en" ? "English" : "Korean"}
+                        {ui.langUI}: {uiLang === "vi" ? "Tiếng Việt" : uiLang === "en" ? "English" : "한국어"}
                     </button>
                     {isLangDropdownOpen && (
                         <div style={{ position: "absolute", top: "100%", right: 0, backgroundColor: "#2c2e31", border: "1px solid #444649", borderRadius: "8px", padding: "4px", display: "flex", flexDirection: "column", gap: "2px", width: "max-content", marginTop: "4px", boxShadow: "0px 10px 30px rgba(0,0,0,0.5)" }}>
-                            <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setUiLang("vi"); setIsLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>Vietnamese</button>
+                            <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setUiLang("vi"); setIsLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>Tiếng Việt</button>
                             <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setUiLang("en"); setIsLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>English</button>
-                            <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setUiLang("ko"); setIsLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>Korean</button>
+                            <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setUiLang("ko"); setIsLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>한국어</button>
                         </div>
                     )}
                 </div>
 
-                {/* 2. CHỌN BÁNH RĂNG (CÀI ĐẶT CHUNG) - CÓ DELAY 1S KHI RỜI CHUỘT */}
+                {/* 2. CHỌN BÁNH RĂNG (CÀI ĐẶT CHUNG) */}
                 <div
                     onMouseEnter={() => {
                         if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
@@ -436,7 +452,7 @@ export default function TypingTest() {
                             onClick={(e) => e.stopPropagation()}
                             style={{ position: 'absolute', top: '100%', right: 0, backgroundColor: '#2c2e31', border: '1px solid #444649', borderRadius: '8px', padding: '6px', display: 'flex', flexDirection: 'column', gap: '4px', width: 'max-content', boxShadow: '0px 10px 30px rgba(0,0,0,0.5)', marginTop: '4px' }}
                         >
-                            <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setIsTextModalOpen(true); setIsDropdownOpen(false); }} style={{ backgroundColor: 'transparent', color: '#d1d0c5', border: 'none', padding: '10px 16px', textAlign: 'left', cursor: 'pointer', borderRadius: '4px', fontSize: '15px', fontFamily: 'monospace', whiteSpace: 'nowrap', transition: "background 0.2s" }}>{ui.optText}</button>
+                            <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setIsTextModalOpen(true); setIsDropdownOpen(false); }} style={{ backgroundColor: 'transparent', color: '#d1d0c5', border: 'none', padding: '10px 16px', textAlign: 'left', cursor: 'pointer', borderRadius: '4px', fontSize: '15px', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{ui.optText}</button>
                             <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setIsLayoutModalOpen(true); setIsDropdownOpen(false); }} style={{ backgroundColor: 'transparent', color: '#d1d0c5', border: 'none', padding: '10px 16px', textAlign: 'left', cursor: 'pointer', borderRadius: '4px', fontSize: '15px', fontFamily: 'monospace', whiteSpace: 'nowrap', transition: "background 0.2s" }}>{ui.optLayout}</button>
                             <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { openTimeModal(); setIsDropdownOpen(false); }} style={{ backgroundColor: 'transparent', color: '#d1d0c5', border: 'none', padding: '10px 16px', textAlign: 'left', cursor: 'pointer', borderRadius: '4px', fontSize: '15px', fontFamily: 'monospace', whiteSpace: 'nowrap', transition: "background 0.2s" }}>{ui.optTime}</button>
                         </div>
@@ -457,7 +473,7 @@ export default function TypingTest() {
                         </span>
                     </div>
 
-                    {/* KHU VỰC ĐIỀU CHỈNH NGÔN NGỮ ĐOẠN VĂN - ĐÃ THÊM DELAY 1S KHI RỜI CHUỘT */}
+                    {/* KHU VỰC ĐIỀU CHỈNH NGÔN NGỮ ĐOẠN VĂN */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginLeft: "auto" }}>
                         <div
                             style={{ position: "relative" }}
@@ -475,11 +491,11 @@ export default function TypingTest() {
                                 onClick={() => setIsTextLangDropdownOpen(!isTextLangDropdownOpen)}
                                 style={{ backgroundColor: "#323437", color: "#e2b714", border: "1px solid #444649", borderRadius: "6px", padding: "6px 12px", cursor: "pointer", fontSize: "14px", fontFamily: "monospace" }}
                             >
-                                {ui.langText}: {textLang === "vi" ? "Vietnamese" : "English"}
+                                {ui.langText}: {textLang === "vi" ? "Tiếng Việt" : "English"}
                             </button>
                             {isTextLangDropdownOpen && (
                                 <div style={{ position: "absolute", bottom: "100%", right: 0, backgroundColor: "#2c2e31", border: "1px solid #444649", borderRadius: "8px", padding: "4px", display: "flex", flexDirection: "column", gap: "2px", width: "max-content", marginBottom: "4px", boxShadow: "0px 10px 30px rgba(0,0,0,0.5)" }}>
-                                    <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setCustomTexts([]); setTextLang("vi"); setIsTextLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>Vietnamese</button>
+                                    <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setCustomTexts([]); setTextLang("vi"); setIsTextLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>Tiếng Việt</button>
                                     <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setCustomTexts([]); setTextLang("en"); setIsTextLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>English</button>
                                 </div>
                             )}
@@ -497,25 +513,24 @@ export default function TypingTest() {
                     </div>
                 </div>
 
-                {/* KHUNG CHỨA VĂN BẢN */}
+                {/* SỬA ĐỔI CHÍNH: KHUNG CHỨA VĂN BẢN (SỬ DỤNG SLICE ĐỂ PHÂN DÒNG TUẦN HOÀN TỰ ĐỘNG) */}
                 <div
                     onClick={focusInput}
                     className="typing-box"
-                    style={{ backgroundColor: '#2c2e31', padding: '24px', borderRadius: '16px', border: '1px solid #444649', cursor: 'text', userSelect: 'none', lineHeight: '1.8', overflow: 'hidden', position: 'relative', boxSizing: 'border-box' }}
+                    style={{ backgroundColor: '#2c2e31', padding: '24px', borderRadius: '16px', border: '1px solid #444649', cursor: 'text', height: '180px', fontSize: '24px', userSelect: 'none', lineHeight: '1.8', overflow: 'hidden', position: 'relative', boxSizing: 'border-box' }}
                 >
                     <div
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '16px',
-                            transform: `translateY(-${currentLineIndex * (window.innerWidth <= 768 ? 58 : 49.2)}px)`,
-                            transition: 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)'
+                            gap: '16px'
+                            // LƯU Ý: Đã loại bỏ hoàn toàn thuộc tính transform: translateY nguy hiểm gây lỗi trôi chữ!
                         }}
                     >
-                        {lines.map((line) => {
+                        {/* GIẢI PHÁP TRIỆT ĐỂ: Chỉ render từ dòng hiện tại đến 3 dòng tiếp theo. Dòng cũ tự động biến mất và giải phóng layout */}
+                        {lines.slice(currentLineIndex, currentLineIndex + 3).map((line) => {
                             const lIdx = line.lineIdx;
                             const isCurrentLine = lIdx === currentLineIndex;
-                            const hasBeenTypedLine = lIdx < currentLineIndex;
 
                             return (
                                 <div
@@ -524,13 +539,13 @@ export default function TypingTest() {
                                     style={{
                                         display: 'flex',
                                         flexWrap: 'wrap',
-                                        opacity: hasBeenTypedLine ? 0 : 1,
-                                        transition: 'opacity 0.3s ease'
+                                        opacity: 1, // Luôn hiển thị rõ nét
+                                        transition: 'opacity 0.2s ease'
                                     }}
                                 >
                                     {line.words.map((word, wIdx) => {
                                         const isCurrentWord = isCurrentLine && (wIdx === currentWordIndexInLine);
-                                        const hasBeenTypedWord = hasBeenTypedLine || (isCurrentLine && wIdx < currentWordIndexInLine);
+                                        const hasBeenTypedWord = lIdx < currentLineIndex || (isCurrentLine && wIdx < currentWordIndexInLine);
 
                                         return (
                                             <div key={wIdx} style={{ display: 'flex', borderBottom: isCurrentWord ? '2px solid #e2b714' : '2px solid transparent', paddingBottom: '2px' }}>
@@ -638,7 +653,7 @@ export default function TypingTest() {
                 </div>
             )}
 
-            {/* MODAL 2: CẤU HÌNH SỐ TÀI KHOẢN TỪ MỖI DÒNG */}
+            {/* MODAL 2: CẤU HÌNH SỐ TỪ MỖI DÒNG */}
             {isLayoutModalOpen && (
                 <div
                     onClick={() => setIsLayoutModalOpen(false)}
