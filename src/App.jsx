@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
 
-import Home from './mainPage/home/Home.jsx'
+import Home from './mainPage/AICode/TypingTest.jsx'
 
 function App() {
 

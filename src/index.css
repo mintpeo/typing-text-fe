@@ -13,3 +13,16 @@
 .btn {
   cursor: pointer;
 }
+
+@layer base {
+  body {
+    background-color: #323437;
+    font-family: 'Courier New', Courier, monospace;
+  }
+}
+
+/* Hiệu ứng nhấp nháy cho con trỏ chữ */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

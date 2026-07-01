@@ -15,7 +15,7 @@ import { TbTargetArrow } from "react-icons/tb";
 import { RiResetRightLine } from "react-icons/ri";
 
 const Home = () => {
-    const [targetText, setTargetText] = useState("Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích.");
+    const [targetText, setTargetText] = useState("Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích. Java là một ngôn ngữ lập trình hướng đối hữu ích.");
     const [typedText, setTypedText] = useState("");
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -243,20 +243,40 @@ const Home = () => {
                     </div>
 
                     {/* Paragraphs */}
+                    {/* Paragraphs */}
                     <div className="paragraph">
-                        <ul className="list-pars flex">
-                            {targetText.split("").map((char, index) => (
-                                <li className="item-par">
-                                    <h2
-                                        className={`
-                                            ${index === currentIndex? "active" : ""}
-                                            ${wordStatus[index] === true? "correct" 
-                                            :wordStatus[index] === false? "wrong" : ""}
-                                        `}>{char === " " ? "\u00A0" : char}
-                                    </h2>
-                                </li>
-                            ))}
-                        </ul>
+                        {(() => {
+                            // Tách chuỗi thành các câu dựa vào dấu chấm và giữ lại dấu chấm
+                            const sentences = targetText.split(/(?<=\.)/).filter(Boolean);
+
+                            let charCounter = 0; // Biến phụ trợ để tính index tuyệt đối của ký tự
+
+                            // Chỉ lấy tối đa 2 dòng (2 câu đầu tiên)
+                            return sentences.slice(0, 2).map((sentence, sentenceIndex) => {
+                                return (
+                                    <ul key={sentenceIndex} className="list-pars flex" style={{ marginBottom: '10px' }}>
+                                        {sentence.split("").map((char) => {
+                                            const currentGlobalIndex = charCounter;
+                                            charCounter++; // Tăng index lên sau mỗi ký tự
+
+                                            return (
+                                                <li key={currentGlobalIndex} className="item-par">
+                                                    <h2
+                                                        className={`
+                                                            ${currentGlobalIndex === currentIndex ? "active" : ""}
+                                                            ${wordStatus[currentGlobalIndex] === true ? "correct" :
+                                                            wordStatus[currentGlobalIndex] === false ? "wrong" : ""}
+                                                        `}
+                                                    >
+                                                        {char === " " ? "\u00A0" : char}
+                                                    </h2>
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                );
+                            });
+                        })()}
                     </div>
 
                     {/* Input Paragraphs */}
