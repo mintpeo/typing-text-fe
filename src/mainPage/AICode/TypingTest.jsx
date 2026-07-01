@@ -27,7 +27,7 @@ const UI_STRINGS = {
         modalTextTitle: "Tùy chỉnh văn bản luyện gõ",
         modalTextDesc: "Bạn có thể dán bài báo, lời bài hát hoặc code vào đây (Nhấn Ctrl + Enter để lưu nhanh).",
         modalLayoutTitle: "Cài đặt hiển thị",
-        modalLayoutDesc: "Xác định số lượng từ trên mỗi dòng hiển thị.",
+        modalLayoutDesc: "Xác định số lượng từ trên mỗi dòng hiển thị. (3 -> 15 từ)",
         modalTimeTitle: "⏱️ Cấu hình thời gian",
         modalTimeDesc: "Nhập số giây bạn muốn tập luyện:",
         cancel: "Hủy",
@@ -50,7 +50,7 @@ const UI_STRINGS = {
         modalTextTitle: "Custom Typing Text",
         modalTextDesc: "You can paste articles, lyrics, or code here (Press Ctrl + Enter to quick save).",
         modalLayoutTitle: "Display Settings",
-        modalLayoutDesc: "Determine the number of words displayed per line.",
+        modalLayoutDesc: "Determine the number of words displayed per line. (3 -> 15 words)",
         modalTimeTitle: "⏱️ Time Configuration",
         modalTimeDesc: "Enter the number of seconds you want to practice:",
         cancel: "Cancel",
@@ -475,11 +475,11 @@ export default function TypingTest() {
                                 onClick={() => setIsTextLangDropdownOpen(!isTextLangDropdownOpen)}
                                 style={{ backgroundColor: "#323437", color: "#e2b714", border: "1px solid #444649", borderRadius: "6px", padding: "6px 12px", cursor: "pointer", fontSize: "14px", fontFamily: "monospace" }}
                             >
-                                {ui.langText}: {textLang === "vi" ? "Tiếng Việt" : "English"}
+                                {ui.langText}: {textLang === "vi" ? "Vietnamese" : "English"}
                             </button>
                             {isTextLangDropdownOpen && (
                                 <div style={{ position: "absolute", bottom: "100%", right: 0, backgroundColor: "#2c2e31", border: "1px solid #444649", borderRadius: "8px", padding: "4px", display: "flex", flexDirection: "column", gap: "2px", width: "max-content", marginBottom: "4px", boxShadow: "0px 10px 30px rgba(0,0,0,0.5)" }}>
-                                    <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setCustomTexts([]); setTextLang("vi"); setIsTextLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>Tiếng Việt</button>
+                                    <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setCustomTexts([]); setTextLang("vi"); setIsTextLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>Vietnamese</button>
                                     <button onMouseEnter={activateHoverStyle} onMouseLeave={deactivateHoverStyle} onClick={() => { setCustomTexts([]); setTextLang("en"); setIsTextLangDropdownOpen(false); }} style={{ backgroundColor: "transparent", color: "#d1d0c5", border: "none", padding: "8px 14px", textAlign: "left", cursor: "pointer", fontSize: "14px", fontFamily: "monospace", borderRadius: "4px", transition: "background 0.2s" }}>English</button>
                                 </div>
                             )}
