@@ -1,5 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
+:root {
+  --backgroundBtn: #4285F4;
+  --background: #323437;
+  --cardBackground: #2c2e31;
+  --border: #444649;
+  --textMain: #d1d0c5;
+  --textMuted: #646669;
+  --accent: #e2b714;
+  --textLight: #fff;
+  --error: #ca4754;
+  --errorBg: rgba(202, 71, 84, 0.15);
+  --success: #2e7d32;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -21,7 +35,6 @@
   }
 }
 
-/* Hiệu ứng nhấp nháy cho con trỏ chữ */
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }

@@ -1,0 +1,33 @@
+.input {
+    width: 100%;
+    background-color: var(--background);
+    color: var(--textLight);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 15px;
+    font-family: monospace;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    color: var(--textMain);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+
+    &:hover {
+        background-color: var(--backgroundBtn);
+        color: var(--background);
+    }
+}
