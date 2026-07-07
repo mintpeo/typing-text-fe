@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import {theme} from "../../utils/theme.js";
+import {useNavigate} from "react-router-dom";
 
 // DỮ LIỆU ĐOẠN VĂN THEO NGÔN NGỮ (TEXT CORES)
 const TEXT_DATABASE = {
@@ -124,6 +126,8 @@ const UI_STRINGS = {
 };
 
 export default function TypingTest() {
+    const navigate = useNavigate();
+
     const [uiLang, setUiLang] = useState("vi");
     const [textLang, setTextLang] = useState("vi");
     const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
@@ -499,6 +503,14 @@ export default function TypingTest() {
                         </div>
                     )}
                 </div>
+
+                {/* NÚT ĐĂNG NHẬP / ĐĂNG KÝ (NẰM BÊN PHẢI NGÔN NGỮ) */}
+                <button
+                    onClick={() => navigate('/auth')}
+                    style={{ backgroundColor: theme.accent, color: theme.background, border: "none", borderRadius: "6px", padding: "8px 14px", cursor: "pointer", fontSize: "14px", fontWeight: "bold", fontFamily: "monospace" }}
+                >
+                    {/*{ui.authBtn}*/}AUTH
+                </button>
 
                 <div
                     onMouseEnter={() => {
