@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { theme } from "../../utils/theme.js";
+import { theme } from "../../constants/theme.js";
+import {useTranslation} from "react-i18next";
+import {useNavigate} from "react-router-dom";
 import './Auth.css';
 
 // import Icons
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
-import {useNavigate} from "react-router-dom";
-import {useTranslation} from "react-i18next";
+import { IoKey } from "react-icons/io5";
+import { FaUserPen } from "react-icons/fa6";
 
 export default function Auth() {
     const navigate = useNavigate();
@@ -23,46 +25,25 @@ export default function Auth() {
     };
 
     return (
-        <div
-            style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', boxSizing: 'border-box' }}
-        >
-            <div
-                onClick={(e) => e.stopPropagation()}
-                style={{ backgroundColor: theme.cardBackground, border: `2px solid ${theme.border}`, borderRadius: '16px', padding: '32px', maxWidth: '400px', width: '100%', display: 'flex', flexDirection: 'column', gap: '20px', boxShadow: '0px 10px 30px rgba(0,0,0,0.5)', color: theme.textMain, fontFamily: 'monospace' }}
-            >
+        <div id="auth">
+            <div className="container" onClick={(e) => e.stopPropagation()}>
                 {/* Icon mũi tên trái */}
-                <div
-                    onClick={() => navigate('/')}
-                    style={{ display: "flex", alignItems: "center", cursor: 'pointer', transition: 'all 0.3s ease' }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateX(-5px)';
-                        e.currentTarget.style.color = '#4285F4';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateX(0px)';
-                        e.currentTarget.style.color = theme.textMuted;
-                    }}
-                >
-                    <FaArrowLeft
-                        size={18}
-                        style={{
-                            marginRight: '10px',
-                        }}
-                    />
+                <div className="back-home" onClick={() => navigate('/')} title={t("titleBtn")}>
+                    <i className="icon"><FaArrowLeft /></i>
 
-                    <p style={{
-                        margin: 0,
-                        fontSize: '16px',
-                        lineHeight: '1' // Đảm bảo chữ không bị dư khoảng trắng phía trên/dưới
-                    }}>
+                    <p style={{margin: 0, fontSize: '16px', lineHeight: '1'}}>
                         {t("titleBtn")}
                     </p>
                 </div>
 
                 {/* Tiêu đề */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ margin: 0, fontSize: '22px', color: theme.accent }}>
-                        {isLogin ? `🔑 ${t("authBtn")}` : `📝 ${t("titleSignUp")}`}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <i className="icon">
+                        {isLogin ? <IoKey /> : <FaUserPen />}
+                    </i>
+
+                    <h3 style={{ margin: 0, fontSize: '22px', color: theme.accent }} title={isLogin ? `${t("authBtn")}` : `${t("titleSignUp")}`}>
+                        {isLogin ? `${t("authBtn")}` : `${t("titleSignUp")}`}
                     </h3>
                 </div>
 

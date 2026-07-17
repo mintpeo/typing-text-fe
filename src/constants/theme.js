@@ -5,6 +5,7 @@ export const theme = {
     textMain: "#d1d0c5",         // Màu chữ chính (xám sáng)
     textMuted: "#646669",        // Màu chữ phụ, mô tả (xám tối)
     accent: "#e2b714",           // Màu vàng chủ đạo (Highlight/Active)
+    accentMuted: "#b38f10",      // Hover/Inactive State
     textLight: "#fff",           // Màu chữ trắng nổi bật
     error: "#ca4754",            // Màu đỏ cảnh báo lỗi / gõ sai
     errorBg: "rgba(202, 71, 84, 0.15)",

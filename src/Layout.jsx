@@ -5,7 +5,10 @@ function Layout() {
     return (
         <>
             <Header />
-            <Outlet />
+            {/* Outlet: Home, Auth,... */}
+            <main style={{marginTop: "7rem"}}>
+                <Outlet />
+            </main>
         </>
     );
 }

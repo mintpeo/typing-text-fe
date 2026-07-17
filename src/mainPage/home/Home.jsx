@@ -23,7 +23,7 @@ export default function Home() {
     const [isTextLangDropdownOpen, setIsTextLangDropdownOpen] = useState(false);
 
     const [customTexts, setCustomTexts] = useState([]);
-    const [wordsPerLine, setWordsPerLine] = useState(8);
+    const [wordsPerLine, setWordsPerLine] = useState(12);
 
     const [maxTime, setMaxTime] = useState(60);
     const [isInfinite, setIsInfinite] = useState(false);
@@ -57,7 +57,7 @@ export default function Home() {
     const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
 
     const [textInputValue, setTextInputValue] = useState("");
-    const [layoutInputValue, setLayoutInputValue] = useState(8);
+    const [layoutInputValue, setLayoutInputValue] = useState(12);
 
     const [timeInputValue, setTimeInputValue] = useState(60);
     const [tempIsInfinite, setTempIsInfinite] = useState(false);
