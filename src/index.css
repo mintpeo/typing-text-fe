@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');*/
 
 :root {
   --backgroundBtn: #4285F4;
@@ -8,6 +8,7 @@
   --textMain: #d1d0c5;
   --textMuted: #646669;
   --accent: #e2b714;
+  --accentMuted: "#b38f10";
   --textLight: #fff;
   --error: #ca4754;
   --errorBg: rgba(202, 71, 84, 0.15);
@@ -18,6 +19,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: monospace;
 }
 
 .flex {
@@ -26,6 +28,12 @@
 
 .btn {
   cursor: pointer;
+}
+
+.icon {
+  display: inline-block;
+  font-size: 16px;
+  vertical-align: middle;
 }
 
 @layer base {
@@ -38,4 +46,23 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
+}
+
+/* Notification */
+@keyframes shake-lr {
+  0%, 100% {
+    transform: rotate(0deg); /* Về vị trí gốc */
+  }
+  20% {
+    transform: rotate(-10deg); /* Lắc sang trái */
+  }
+  40% {
+    transform: rotate(10deg); /* Lắc sang phải */
+  }
+  60% {
+    transform: rotate(-8deg); /* Lắc sang trái nhẹ hơn */
+  }
+  80% {
+    transform: rotate(8deg); /* Lắc sang phải nhẹ hơn */
+  }
 }

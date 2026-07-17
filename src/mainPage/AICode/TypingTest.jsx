@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {theme} from "../../utils/theme.js";
+import {theme} from "../../constants/theme.js";
 import {useNavigate} from "react-router-dom";
 
 // DỮ LIỆU ĐOẠN VĂN THEO NGÔN NGỮ (TEXT CORES)

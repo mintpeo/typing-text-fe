@@ -1,15 +1,17 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import './utils/language/i18n.js'
+import './constants/language/i18n.js'
 import './App.css'
 
 import Home from './mainPage/home/Home.jsx'
 import Auth from './mainPage/auth/Auth.jsx'
 import Layout from './Layout.jsx'
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
 
   return (
     <>
+        <Analytics />
         <Router>
             <Routes>
                 <Route element={<Layout />}>
@@ -18,7 +20,7 @@ function App() {
                     <Route path="/auth" element={<Auth />} />
                 </Route>
 
-            {/*    ko co header*/}
+                {/* Not Use Header */}
             </Routes>
         </Router>
     </>
